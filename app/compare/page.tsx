@@ -4,6 +4,7 @@ import React from "react";
 import BuildPanel, { calcTotal } from "@/components/BuildPanel";
 import type { BuildState } from "@/lib/types";
 import { STAT_KEYS, type StatKey } from "@/lib/constants/stats";
+import { loadBuildFromStorage } from "@/lib/storage";
 
 const STAT_LABEL_KO: Record<StatKey, string> = {
   STR: "STR",
@@ -34,6 +35,22 @@ function makeEmpty(): BuildState {
 export default function Page() {
   const [a, setA] = React.useState<BuildState>(makeEmpty());
   const [b, setB] = React.useState<BuildState>(makeEmpty());
+  const [loadedAt, setLoadedAt] = React.useState<string | null>(null);
+
+  // ✅ 자동 불러오기: compare 들어오면 저장된 세팅이 있으면 A로 세팅
+  React.useEffect(() => {
+    const loaded = loadBuildFromStorage();
+    if (!loaded) return;
+    setA(loaded.build);
+    setLoadedAt(loaded.savedAt);
+  }, []);
+
+  function loadToA() {
+    const loaded = loadBuildFromStorage();
+    if (!loaded) return;
+    setA(loaded.build);
+    setLoadedAt(loaded.savedAt);
+  }
 
   const totalA = React.useMemo(() => calcTotal(a), [a]);
   const totalB = React.useMemo(() => calcTotal(b), [b]);
@@ -46,7 +63,21 @@ export default function Page() {
 
   return (
     <main className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">MBL /compare (세팅 A/B 비교)</h1>
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold">MBL /compare (세팅 A/B 비교)</h1>
+
+        <button className="rounded-xl border px-4 py-2" onClick={loadToA}>
+          저장된 세팅을 A로 불러오기
+        </button>
+      </div>
+
+      {loadedAt ? (
+        <div className="text-sm text-gray-600">
+          A는 저장된 세팅에서 불러옴 (저장 시각: {new Date(loadedAt).toLocaleString()})
+        </div>
+      ) : (
+        <div className="text-sm text-gray-500">저장된 세팅이 없으면 A는 빈 상태로 시작해요.</div>
+      )}
 
       <section className="rounded-2xl border p-4 space-y-3">
         <h2 className="font-semibold">총합 스탯 비교 (B - A)</h2>
