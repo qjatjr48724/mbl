@@ -4,7 +4,7 @@ import React from "react";
 import BuildPanel, { calcTotal } from "@/components/BuildPanel";
 import type { BuildState } from "@/lib/types";
 import { STAT_KEYS, type StatKey } from "@/lib/constants/stats";
-import { loadBuildFromStorage } from "@/lib/storage";
+import { loadBuildA, loadBuildB } from "@/lib/storage";
 
 const STAT_LABEL_KO: Record<StatKey, string> = {
   STR: "STR",
@@ -35,21 +35,36 @@ function makeEmpty(): BuildState {
 export default function Page() {
   const [a, setA] = React.useState<BuildState>(makeEmpty());
   const [b, setB] = React.useState<BuildState>(makeEmpty());
-  const [loadedAt, setLoadedAt] = React.useState<string | null>(null);
 
-  // ✅ 자동 불러오기: compare 들어오면 저장된 세팅이 있으면 A로 세팅
+  const [loadedAAt, setLoadedAAt] = React.useState<string | null>(null);
+  const [loadedBAt, setLoadedBAt] = React.useState<string | null>(null);
+
+  // 자동 불러오기: compare 들어오면 저장된 세팅이 있으면 A/B에 적용
   React.useEffect(() => {
-    const loaded = loadBuildFromStorage();
-    if (!loaded) return;
-    setA(loaded.build);
-    setLoadedAt(loaded.savedAt);
+    const la = loadBuildA();
+    if (la) {
+      setA(la.build);
+      setLoadedAAt(la.savedAt);
+    }
+    const lb = loadBuildB();
+    if (lb) {
+      setB(lb.build);
+      setLoadedBAt(lb.savedAt);
+    }
   }, []);
 
   function loadToA() {
-    const loaded = loadBuildFromStorage();
-    if (!loaded) return;
-    setA(loaded.build);
-    setLoadedAt(loaded.savedAt);
+    const la = loadBuildA();
+    if (!la) return;
+    setA(la.build);
+    setLoadedAAt(la.savedAt);
+  }
+
+  function loadToB() {
+    const lb = loadBuildB();
+    if (!lb) return;
+    setB(lb.build);
+    setLoadedBAt(lb.savedAt);
   }
 
   const totalA = React.useMemo(() => calcTotal(a), [a]);
@@ -62,22 +77,24 @@ export default function Page() {
   }, [totalA, totalB]);
 
   return (
-    <main className="p-6 space-y-6">
+    <main className="space-y-6">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold">MBL /compare (세팅 A/B 비교)</h1>
 
-        <button className="rounded-xl border px-4 py-2" onClick={loadToA}>
-          저장된 세팅을 A로 불러오기
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="rounded-xl border px-4 py-2 text-sm hover:bg-gray-50" onClick={loadToA}>
+            A 불러오기
+          </button>
+          <button className="rounded-xl border px-4 py-2 text-sm hover:bg-gray-50" onClick={loadToB}>
+            B 불러오기
+          </button>
+        </div>
       </div>
 
-      {loadedAt ? (
-        <div className="text-sm text-gray-600">
-          A는 저장된 세팅에서 불러옴 (저장 시각: {new Date(loadedAt).toLocaleString()})
-        </div>
-      ) : (
-        <div className="text-sm text-gray-500">저장된 세팅이 없으면 A는 빈 상태로 시작해요.</div>
-      )}
+      <div className="text-sm text-gray-600">
+        A 저장: {loadedAAt ? new Date(loadedAAt).toLocaleString() : "없음"} / B 저장:{" "}
+        {loadedBAt ? new Date(loadedBAt).toLocaleString() : "없음"}
+      </div>
 
       <section className="rounded-2xl border p-4 space-y-3">
         <h2 className="font-semibold">총합 스탯 비교 (B - A)</h2>

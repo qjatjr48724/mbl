@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import BuildPanel from "@/components/BuildPanel";
 import type { BuildState } from "@/lib/types";
-import { saveBuildToStorage, loadBuildFromStorage } from "@/lib/storage";
-import Link from "next/link";
+import { loadBuildA, loadBuildB, saveBuildA, saveBuildB } from "@/lib/storage";
 
 export default function Page() {
   const [state, setState] = React.useState<BuildState>({
@@ -14,24 +14,27 @@ export default function Page() {
     equipped: {},
   });
 
-  const [savedInfo, setSavedInfo] = React.useState<string | null>(null);
+  const [toast, setToast] = React.useState<string | null>(null);
 
-  function onSave() {
-    saveBuildToStorage(state);
-    setSavedInfo("저장 완료!");
-    setTimeout(() => setSavedInfo(null), 1500);
+  function show(msg: string) {
+    setToast(msg);
+    setTimeout(() => setToast(null), 1400);
   }
 
-  function onLoad() {
-    const loaded = loadBuildFromStorage();
+  function handleSave(target: "A" | "B") {
+    if (target === "A") saveBuildA(state);
+    else saveBuildB(state);
+    show(`${target} 세팅으로 저장했어`);
+  }
+
+  function handleLoad(target: "A" | "B") {
+    const loaded = target === "A" ? loadBuildA() : loadBuildB();
     if (!loaded) {
-      setSavedInfo("저장된 세팅이 없어요.");
-      setTimeout(() => setSavedInfo(null), 1500);
+      show(`${target}로 저장된 세팅이 없어`);
       return;
     }
     setState(loaded.build);
-    setSavedInfo("저장된 세팅 불러옴!");
-    setTimeout(() => setSavedInfo(null), 1500);
+    show(`${target} 세팅을 불러왔어`);
   }
 
   return (
@@ -40,19 +43,50 @@ export default function Page() {
         <h1 className="text-2xl font-semibold">MBL /build</h1>
 
         <div className="flex items-center gap-2">
-          <button className="rounded-xl border px-4 py-2" onClick={onLoad}>
-            저장된 세팅 불러오기
-          </button>
-          <button className="rounded-xl bg-black px-4 py-2 text-white" onClick={onSave}>
-            이 세팅 저장(A용)
-          </button>
-          <Link className="rounded-xl border px-4 py-2" href="/compare">
+          {/* 불러오기 선택 */}
+          <select
+            className="rounded-xl border px-3 py-2 text-sm"
+            defaultValue=""
+            onChange={(e) => {
+              const v = e.target.value as "A" | "B" | "";
+              if (!v) return;
+              handleLoad(v);
+              e.currentTarget.value = "";
+            }}
+          >
+            <option value="" disabled>
+              저장된 세팅 불러오기…
+            </option>
+            <option value="A">A 불러오기</option>
+            <option value="B">B 불러오기</option>
+          </select>
+
+          {/* 저장 선택 */}
+          <select
+            className="rounded-xl border px-3 py-2 text-sm"
+            defaultValue=""
+            onChange={(e) => {
+              const v = e.target.value as "A" | "B" | "";
+              if (!v) return;
+              handleSave(v);
+              e.currentTarget.value = "";
+            }}
+          >
+            <option value="" disabled>
+              현재 세팅 저장하기…
+            </option>
+            <option value="A">A로 저장</option>
+            <option value="B">B로 저장</option>
+          </select>
+
+          {/* compare 이동 */}
+          <Link className="rounded-xl border px-4 py-2 text-sm hover:bg-gray-50" href="/compare">
             compare로 이동
           </Link>
         </div>
       </div>
 
-      {savedInfo ? <div className="text-sm text-gray-600">{savedInfo}</div> : null}
+      {toast ? <div className="text-sm text-gray-600">{toast}</div> : null}
 
       <BuildPanel title="세팅" state={state} setState={setState} />
     </main>
