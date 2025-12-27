@@ -1,11 +1,11 @@
-// mbl/lib/storage.ts
 import type { BuildState } from "./types";
 
-const KEY = "mbl.savedBuild.v1";
+const KEY_A = "mbl.savedBuildA.v1";
+const KEY_B = "mbl.savedBuildB.v1";
 
 type Payload = {
   version: 1;
-  savedAt: string; // ISO
+  savedAt: string;
   build: BuildState;
 };
 
@@ -13,21 +13,15 @@ function isBrowser() {
   return typeof window !== "undefined";
 }
 
-export function saveBuildToStorage(build: BuildState) {
+function save(key: string, build: BuildState) {
   if (!isBrowser()) return;
-
-  const payload: Payload = {
-    version: 1,
-    savedAt: new Date().toISOString(),
-    build,
-  };
-  localStorage.setItem(KEY, JSON.stringify(payload));
+  const payload: Payload = { version: 1, savedAt: new Date().toISOString(), build };
+  localStorage.setItem(key, JSON.stringify(payload));
 }
 
-export function loadBuildFromStorage(): { build: BuildState; savedAt: string } | null {
+function load(key: string): { build: BuildState; savedAt: string } | null {
   if (!isBrowser()) return null;
-
-  const raw = localStorage.getItem(KEY);
+  const raw = localStorage.getItem(key);
   if (!raw) return null;
 
   try {
@@ -39,7 +33,23 @@ export function loadBuildFromStorage(): { build: BuildState; savedAt: string } |
   }
 }
 
-export function clearSavedBuild() {
+export function saveBuildA(build: BuildState) {
+  save(KEY_A, build);
+}
+export function saveBuildB(build: BuildState) {
+  save(KEY_B, build);
+}
+export function loadBuildA() {
+  return load(KEY_A);
+}
+export function loadBuildB() {
+  return load(KEY_B);
+}
+export function clearBuildA() {
   if (!isBrowser()) return;
-  localStorage.removeItem(KEY);
+  localStorage.removeItem(KEY_A);
+}
+export function clearBuildB() {
+  if (!isBrowser()) return;
+  localStorage.removeItem(KEY_B);
 }
