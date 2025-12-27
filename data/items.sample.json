@@ -1,0 +1,128 @@
+[
+    {
+      "id": "weapon_wand_001",
+      "name": "초보자 완드",
+      "slot": "weapon",
+      "requiredLevel": 8,
+      "jobRestrictions": ["마법사"],
+      "statTemplate": ["MATT"],
+      "defaultStats": { "MATT": 12 }
+    },
+    {
+      "id": "cap_001",
+      "name": "지능 모자(샘플)",
+      "slot": "cap",
+      "requiredLevel": 30,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["INT", "LUK", "WDEF", "MDEF"],
+      "defaultStats": { "INT": 3, "LUK": 0, "WDEF": 10, "MDEF": 10 }
+    },
+    {
+      "id": "mantle_001",
+      "name": "망토(스탯 미확정 샘플)",
+      "slot": "mantle",
+      "requiredLevel": 25,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["INT", "LUK", "SPEED", "JUMP"]
+    },
+    {
+      "id": "ear_acc_001",
+      "name": "귀고리(샘플)",
+      "slot": "ear_acc",
+      "requiredLevel": 15,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["INT", "LUK", "ACC"],
+      "defaultStats": { "INT": 2, "LUK": 1, "ACC": 0 }
+    },
+    {
+      "id": "eye_acc_001",
+      "name": "눈장식(스탯 미확정 샘플)",
+      "slot": "eye_acc",
+      "requiredLevel": 20,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["ACC", "AVOID"]
+    },
+    {
+      "id": "ring_001",
+      "name": "반지(샘플)",
+      "slot": "ring1",
+      "requiredLevel": 10,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["STR", "DEX", "INT", "LUK"]
+    },
+    {
+      "id": "pendant_001",
+      "name": "목걸이(샘플)",
+      "slot": "pendant",
+      "requiredLevel": 30,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["STR", "DEX", "INT", "LUK", "HP", "MP"],
+      "defaultStats": { "STR": 1, "DEX": 1, "INT": 1, "LUK": 1, "HP": 0, "MP": 0 }
+    },
+    {
+      "id": "shield_001",
+      "name": "방패(샘플)",
+      "slot": "shield",
+      "requiredLevel": 20,
+      "jobRestrictions": ["전사", "도적"],
+      "statTemplate": ["WDEF", "MDEF", "AVOID"]
+    },
+    {
+      "id": "clothes_001",
+      "name": "상의(샘플)",
+      "slot": "clothes",
+      "requiredLevel": 15,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["WDEF", "MDEF", "HP"]
+    },
+    {
+      "id": "pants_001",
+      "name": "하의(샘플)",
+      "slot": "pants",
+      "requiredLevel": 15,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["WDEF", "MDEF", "SPEED"]
+    },
+    {
+      "id": "gloves_001",
+      "name": "장갑(샘플)",
+      "slot": "gloves",
+      "requiredLevel": 10,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["ACC", "WATT", "MATT"]
+    },
+    {
+      "id": "shoes_001",
+      "name": "신발(샘플)",
+      "slot": "shoes",
+      "requiredLevel": 10,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["SPEED", "JUMP", "AVOID"]
+    },
+    {
+      "id": "belt_001",
+      "name": "벨트(샘플)",
+      "slot": "belt",
+      "requiredLevel": 30,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["STR", "DEX", "INT", "LUK"]
+    },
+    {
+      "id": "medal_001",
+      "name": "훈장(샘플)",
+      "slot": "medal",
+      "requiredLevel": 1,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["STR", "DEX", "INT", "LUK", "WATT", "MATT"],
+      "defaultStats": { "STR": 0, "DEX": 0, "INT": 0, "LUK": 0, "WATT": 0, "MATT": 0 }
+    },
+    {
+      "id": "pet_acc_001",
+      "name": "펫장신구(샘플)",
+      "slot": "pet_acc",
+      "requiredLevel": 1,
+      "jobRestrictions": ["ALL"],
+      "statTemplate": ["STR", "DEX", "INT", "LUK", "HP", "MP"]
+    }
+  ]
+  
