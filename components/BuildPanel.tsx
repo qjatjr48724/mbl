@@ -6,6 +6,9 @@ import type { BuildState, ItemMaster, JobKo } from "@/lib/types";
 import { SLOT_KEYS, SLOT_LABEL_KO, type SlotKey } from "@/lib/constants/slots";
 import { STAT_KEYS, addStats, normalizeStats, type StatKey, type Stats } from "@/lib/constants/stats";
 
+import CombatPowerCard from "@/components/CombatPowerCard";
+import { deriveCombatPower } from "@/lib/engine/combatPower";
+
 const JOBS: JobKo[] = ["전사", "마법사", "궁수", "도적"];
 
 const STAT_LABEL_KO: Record<StatKey, string> = {
@@ -29,6 +32,7 @@ const STAT_LABEL_KO: Record<StatKey, string> = {
 function makeInitialModalStats(item: ItemMaster): Stats {
   const out: Stats = {};
   for (const k of item.statTemplate) out[k] = null;
+
   if (item.defaultStats) {
     for (const [k, v] of Object.entries(item.defaultStats)) {
       out[k as StatKey] = v;
@@ -98,6 +102,7 @@ export default function BuildPanel({
   }, [activeSlot, query, state.job, state.level]);
 
   const total = React.useMemo(() => calcTotal(state), [state]);
+  const combatPower = React.useMemo(() => deriveCombatPower(total), [total]);
 
   function openItemModal(item: ItemMaster) {
     setModalItem(item);
@@ -147,6 +152,7 @@ export default function BuildPanel({
         <div className="text-xs text-gray-500">v1.2</div>
       </header>
 
+      {/* 상단: 직업/레벨, 순스탯, 총합 */}
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border p-3 space-y-3">
           <div className="font-semibold">직업 / 레벨</div>
@@ -218,12 +224,14 @@ export default function BuildPanel({
             })}
           </div>
 
-          <div className="text-xs text-gray-500">
-            * 빈칸(null)은 계산 시 0으로 취급
-          </div>
+          <div className="text-xs text-gray-500">* 빈칸(null)은 계산 시 0으로 취급</div>
         </div>
       </div>
 
+      {/* v1 공격력/마력 표기 */}
+      <CombatPowerCard value={combatPower} title="공격력/마력(표기)" />
+
+      {/* 슬롯 + 검색 */}
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border p-3 space-y-2 md:col-span-1">
           <div className="font-semibold">슬롯</div>
@@ -267,9 +275,7 @@ export default function BuildPanel({
 
           <div className="grid gap-2">
             {filteredItems.length === 0 ? (
-              <div className="rounded-xl bg-gray-50 p-4 text-sm text-gray-600">
-                조건에 맞는 아이템이 없습니다.
-              </div>
+              <div className="rounded-xl bg-gray-50 p-4 text-sm text-gray-600">조건에 맞는 아이템이 없습니다.</div>
             ) : (
               filteredItems.map((it) => (
                 <button
@@ -292,6 +298,7 @@ export default function BuildPanel({
         </div>
       </div>
 
+      {/* 장착 목록 */}
       <div className="rounded-2xl border p-3 space-y-2">
         <div className="font-semibold">장착 목록</div>
         <div className="grid gap-2 md:grid-cols-2">
@@ -320,6 +327,7 @@ export default function BuildPanel({
         </div>
       </div>
 
+      {/* 모달 */}
       {modalOpen && modalItem ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
           <div className="w-full max-w-lg rounded-2xl bg-white p-4 space-y-4">
@@ -380,7 +388,6 @@ export default function BuildPanel({
                       >
                         +
                       </button>
-                      +
                     </div>
                   </div>
                 );

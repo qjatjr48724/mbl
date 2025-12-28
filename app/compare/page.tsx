@@ -5,6 +5,7 @@ import BuildPanel, { calcTotal } from "@/components/BuildPanel";
 import type { BuildState } from "@/lib/types";
 import { STAT_KEYS, type StatKey } from "@/lib/constants/stats";
 import { loadBuildA, loadBuildB } from "@/lib/storage";
+import { deriveCombatPower } from "@/lib/engine/combatPower";
 
 const STAT_LABEL_KO: Record<StatKey, string> = {
   STR: "STR",
@@ -39,7 +40,6 @@ export default function Page() {
   const [loadedAAt, setLoadedAAt] = React.useState<string | null>(null);
   const [loadedBAt, setLoadedBAt] = React.useState<string | null>(null);
 
-  // 자동 불러오기: compare 들어오면 저장된 세팅이 있으면 A/B에 적용
   React.useEffect(() => {
     const la = loadBuildA();
     if (la) {
@@ -76,6 +76,16 @@ export default function Page() {
     return out;
   }, [totalA, totalB]);
 
+  const cpA = React.useMemo(() => deriveCombatPower(totalA), [totalA]);
+  const cpB = React.useMemo(() => deriveCombatPower(totalB), [totalB]);
+  const cpDelta = React.useMemo(
+    () => ({
+      attackPower: cpB.attackPower - cpA.attackPower,
+      magicPower: cpB.magicPower - cpA.magicPower,
+    }),
+    [cpA, cpB]
+  );
+
   return (
     <main className="space-y-6">
       <div className="flex items-center justify-between gap-3">
@@ -96,6 +106,39 @@ export default function Page() {
         {loadedBAt ? new Date(loadedBAt).toLocaleString() : "없음"}
       </div>
 
+      {/* 공격력/마력 비교 */}
+      <section className="rounded-2xl border p-4 space-y-2">
+        <h2 className="font-semibold">공격력/마력 비교</h2>
+
+        <div className="grid gap-2 md:grid-cols-3 text-sm">
+          <div className="rounded-xl bg-gray-50 p-3">
+            <div className="text-gray-600">A</div>
+            <div className="mt-1 font-medium">
+              공격력 {cpA.attackPower} · 마력 {cpA.magicPower}
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-gray-50 p-3">
+            <div className="text-gray-600">B</div>
+            <div className="mt-1 font-medium">
+              공격력 {cpB.attackPower} · 마력 {cpB.magicPower}
+            </div>
+          </div>
+
+          <div className="rounded-xl bg-gray-50 p-3">
+            <div className="text-gray-600">Δ (B - A)</div>
+            <div className="mt-1 font-medium">
+              공격력 {cpDelta.attackPower >= 0 ? "+" : ""}
+              {cpDelta.attackPower} · 마력 {cpDelta.magicPower >= 0 ? "+" : ""}
+              {cpDelta.magicPower}
+            </div>
+          </div>
+        </div>
+
+        <p className="text-xs text-gray-500">* v1에서는 총합 WATT/MATT 기준으로만 비교합니다.</p>
+      </section>
+
+      {/* 스탯 비교 */}
       <section className="rounded-2xl border p-4 space-y-3">
         <h2 className="font-semibold">총합 스탯 비교 (B - A)</h2>
         <div className="grid gap-2 md:grid-cols-3">
@@ -117,6 +160,7 @@ export default function Page() {
         <p className="text-xs text-gray-500">* A 대비 B의 변화량입니다.</p>
       </section>
 
+      {/* A/B 패널 */}
       <section className="grid gap-4 md:grid-cols-2">
         <BuildPanel title="세팅 A" state={a} setState={setA} />
         <BuildPanel title="세팅 B" state={b} setState={setB} />
