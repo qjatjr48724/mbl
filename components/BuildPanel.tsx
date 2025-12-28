@@ -12,6 +12,7 @@ import { getJobOptionsByGroup, formatJobLabel } from "@/lib/jobs";
 import { WEAPON_KEYS, WEAPON_LABEL_KO, type WeaponKey } from "@/lib/constants/weapons";
 import DerivedStatsCard from "@/components/DerivedStatsCard";
 import { deriveAll } from "@/lib/engine/derivedStats";
+import { getAllowedWeapons } from "@/lib/constants/weaponRules";
 
 
 
@@ -107,17 +108,26 @@ export default function BuildPanel({
       return it.name.includes(q);
     }).slice(0, 50);
   }, [activeSlot, query, state.job, state.level]);
+  
+  const allowedWeapons = React.useMemo(
+    () => getAllowedWeapons(state.job, state.jobDetail ?? null),
+    [state.job, state.jobDetail]
+  );
+  
 
 // ### total 계산
   const total = React.useMemo(() => calcTotal(state), [state]);
   const combatPower = React.useMemo(() => deriveCombatPower(total), [total]);
   const jobOptions = React.useMemo(() => getJobOptionsByGroup(state.job), [state.job]);
+  const safeWeaponType = state.weaponType && allowedWeapons.includes(state.weaponType)
+  ? state.weaponType
+  : (allowedWeapons[0] ?? null);
   const derived = React.useMemo(
     () =>
       deriveAll({
         total,
         job: state.job,
-        weaponType: state.weaponType ?? null,
+        weaponType: safeWeaponType ?? null,
         physMastery: state.physMastery ?? 0.6,
         spellMastery: state.spellMastery ?? 0.6,
         spellAttack: state.spellAttack ?? 100,
@@ -185,13 +195,17 @@ export default function BuildPanel({
             <select
               className="w-full rounded-xl border px-3 py-2"
               value={state.job}
-              onChange={(e) =>
+              onChange={(e) => {
+                const nextJob = e.target.value as JobKo;
+                const nextAllowed = getAllowedWeapons(nextJob, null);
                 setState((p) => ({
                   ...p,
-                  job: e.target.value as JobKo,
+                  job: nextJob,
                   jobDetail: null,
-                }))
-              }
+                  weaponType: nextAllowed[0] ?? null,
+                }));
+              }}
+              
               
             >
               {JOBS.map((j) => (
@@ -208,12 +222,16 @@ export default function BuildPanel({
             <select
               className="w-full rounded-xl border px-3 py-2"
               value={state.jobDetail ?? ""}
-              onChange={(e) =>
+              onChange={(e) => {
+                const nextDetail = e.target.value === "" ? null : e.target.value;
+                const nextAllowed = getAllowedWeapons(state.job, nextDetail);
                 setState((p) => ({
                   ...p,
-                  jobDetail: e.target.value === "" ? null : e.target.value,
-                }))
-              }
+                  jobDetail: nextDetail,
+                  weaponType: nextAllowed[0] ?? null,
+                }));
+              }}
+              
             >
               <option value="">(선택 안 함)</option>
               {jobOptions.map((opt) => (
@@ -237,11 +255,12 @@ export default function BuildPanel({
               }
             >
               <option value="">(선택 안 함)</option>
-              {WEAPON_KEYS.map((k) => (
+              {allowedWeapons.map((k) => (
                 <option key={k} value={k}>
                   {WEAPON_LABEL_KO[k]}
                 </option>
               ))}
+
             </select>
             <div className="text-[11px] text-gray-500">
               * 도끼/둔기/창/폴암은 베기/찌르기에 따라 상수가 달라져서 둘 다 계산해 표시합니다.
