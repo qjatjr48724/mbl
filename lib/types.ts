@@ -28,6 +28,8 @@ export type BuildState = {
   level: number;
   baseStats: Stats;
   equipped: Partial<Record<SlotKey, EquippedItem>>;
+  skills?: Record<string, number>; // 스킬ID -> 레벨
+
 
   // ✅ 추가
   weaponType?: WeaponKey | null;

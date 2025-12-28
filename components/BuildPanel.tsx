@@ -249,7 +249,7 @@ export default function BuildPanel({
           </div>
 
           <div className="grid grid-cols-3 gap-2">
-            <div className="space-y-1">
+            {/* <div className="space-y-1">
               <div className="text-xs text-gray-600">물리 숙련도</div>
               <input
                 className="w-full rounded-xl border px-3 py-2"
@@ -277,7 +277,7 @@ export default function BuildPanel({
                   setState((p) => ({ ...p, spellMastery: Number(e.target.value) }))
                 }
               />
-            </div>
+            </div> */}
 
             <div className="space-y-1">
               <div className="text-xs text-gray-600">스킬공격력</div>
