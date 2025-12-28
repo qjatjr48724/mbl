@@ -8,6 +8,8 @@ import { STAT_KEYS, addStats, normalizeStats, type StatKey, type Stats } from "@
 
 import CombatPowerCard from "@/components/CombatPowerCard";
 import { deriveCombatPower } from "@/lib/engine/combatPower";
+import { getJobOptionsByGroup, formatJobLabel } from "@/lib/jobs";
+
 
 const JOBS: JobKo[] = ["전사", "마법사", "궁수", "도적"];
 
@@ -101,8 +103,11 @@ export default function BuildPanel({
     }).slice(0, 50);
   }, [activeSlot, query, state.job, state.level]);
 
+
   const total = React.useMemo(() => calcTotal(state), [state]);
   const combatPower = React.useMemo(() => deriveCombatPower(total), [total]);
+  const jobOptions = React.useMemo(() => getJobOptionsByGroup(state.job), [state.job]);
+
 
   function openItemModal(item: ItemMaster) {
     setModalItem(item);
@@ -156,21 +161,52 @@ export default function BuildPanel({
       <div className="grid gap-4 md:grid-cols-3">
         <div className="rounded-2xl border p-3 space-y-3">
           <div className="font-semibold">직업 / 레벨</div>
-
+            
           <div className="space-y-1">
             <div className="text-xs text-gray-600">직업</div>
             <select
               className="w-full rounded-xl border px-3 py-2"
               value={state.job}
-              onChange={(e) => setState((p) => ({ ...p, job: e.target.value as JobKo }))}
+              onChange={(e) =>
+                setState((p) => ({
+                  ...p,
+                  job: e.target.value as JobKo,
+                  jobDetail: null,
+                }))
+              }
+              
             >
               {JOBS.map((j) => (
                 <option key={j} value={j}>
                   {j}
                 </option>
               ))}
+              
             </select>
           </div>
+
+          <div className="space-y-1">
+            <div className="text-xs text-gray-600">직업 상세(1~4차)</div>
+            <select
+              className="w-full rounded-xl border px-3 py-2"
+              value={state.jobDetail ?? ""}
+              onChange={(e) =>
+                setState((p) => ({
+                  ...p,
+                  jobDetail: e.target.value === "" ? null : e.target.value,
+                }))
+              }
+            >
+              <option value="">(선택 안 함)</option>
+              {jobOptions.map((opt) => (
+                <option key={opt.id} value={opt.label}>
+                  {formatJobLabel(opt)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+
 
           <div className="space-y-1">
             <div className="text-xs text-gray-600">레벨</div>

@@ -22,7 +22,10 @@ export type EquippedItem = {
 
 export type BuildState = {
   job: JobKo;
+  jobDetail?: string | null; // ✅ 추가: 예) "클레릭", "프리스트", "비숍" ...
   level: number;
   baseStats: Stats;
   equipped: Partial<Record<SlotKey, EquippedItem>>;
 };
+
+

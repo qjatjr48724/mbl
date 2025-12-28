@@ -1,0 +1,110 @@
+{
+    "version": 1,
+    "groups": [
+      {
+        "id": "warrior",
+        "label": "전사",
+        "children": [
+          {
+            "id": "fighter",
+            "label": "파이터",
+            "tier": 1,
+            "children": [
+              { "id": "crusader", "label": "크루세이더", "tier": 2, "children": [{ "id": "hero", "label": "히어로", "tier": 3 }] }
+            ]
+          },
+          {
+            "id": "page",
+            "label": "페이지",
+            "tier": 1,
+            "children": [
+              { "id": "whiteknight", "label": "나이트", "tier": 2, "children": [{ "id": "paladin", "label": "팔라딘", "tier": 3 }] }
+            ]
+          },
+          {
+            "id": "spearman",
+            "label": "스피어맨",
+            "tier": 1,
+            "children": [
+              { "id": "dragonknight", "label": "용기사", "tier": 2, "children": [{ "id": "darkknight", "label": "다크나이트", "tier": 3 }] }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "magician",
+        "label": "마법사",
+        "children": [
+          {
+            "id": "wizard_fp",
+            "label": "위자드(불/독)",
+            "tier": 1,
+            "children": [
+              { "id": "mage_fp", "label": "메이지(불/독)", "tier": 2, "children": [{ "id": "archmage_fp", "label": "아크메이지(불/독)", "tier": 3 }] }
+            ]
+          },
+          {
+            "id": "wizard_il",
+            "label": "위자드(썬/콜)",
+            "tier": 1,
+            "children": [
+              { "id": "mage_il", "label": "메이지(썬/콜)", "tier": 2, "children": [{ "id": "archmage_il", "label": "아크메이지(썬/콜)", "tier": 3 }] }
+            ]
+          },
+          {
+            "id": "cleric",
+            "label": "클레릭",
+            "tier": 1,
+            "children": [
+              { "id": "priest", "label": "프리스트", "tier": 2, "children": [{ "id": "bishop", "label": "비숍", "tier": 3 }] }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "archer",
+        "label": "궁수",
+        "children": [
+          {
+            "id": "hunter",
+            "label": "헌터",
+            "tier": 1,
+            "children": [
+              { "id": "ranger", "label": "레인저", "tier": 2, "children": [{ "id": "bowmaster", "label": "보우마스터", "tier": 3 }] }
+            ]
+          },
+          {
+            "id": "crossbowman",
+            "label": "사수",
+            "tier": 1,
+            "children": [
+              { "id": "sniper", "label": "저격수", "tier": 2, "children": [{ "id": "marksman", "label": "신궁", "tier": 3 }] }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "thief",
+        "label": "도적",
+        "children": [
+          {
+            "id": "assassin",
+            "label": "어쌔신",
+            "tier": 1,
+            "children": [
+              { "id": "hermit", "label": "허밋", "tier": 2, "children": [{ "id": "nightlord", "label": "나이트로드", "tier": 3 }] }
+            ]
+          },
+          {
+            "id": "bandit",
+            "label": "시프",
+            "tier": 1,
+            "children": [
+              { "id": "chiefbandit", "label": "시프마스터", "tier": 2, "children": [{ "id": "shadower", "label": "섀도어", "tier": 3 }] }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+  
