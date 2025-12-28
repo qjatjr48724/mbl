@@ -1,4 +1,5 @@
 import type { SlotKey } from "./constants/slots";
+import type { WeaponKey } from "@/lib/constants/weapons";
 import type { StatKey, Stats } from "./constants/stats";
 
 export type JobKo = "전사" | "마법사" | "궁수" | "도적";
@@ -20,12 +21,21 @@ export type EquippedItem = {
   customStats: Stats; // number | null
 };
 
+
 export type BuildState = {
   job: JobKo;
-  jobDetail?: string | null; // ✅ 추가: 예) "클레릭", "프리스트", "비숍" ...
+  jobDetail?: string | null;
   level: number;
   baseStats: Stats;
   equipped: Partial<Record<SlotKey, EquippedItem>>;
+
+  // ✅ 추가
+  weaponType?: WeaponKey | null;
+
+  // ✅ 기본값을 UI에서 설정(없으면 아래 엔진에서 fallback)
+  physMastery?: number | null;   // 0~1, 예: 0.6
+  spellMastery?: number | null;  // 0~1, 예: 0.6
+  spellAttack?: number | null;   // 스킬공격력(기준값) 예: 100
 };
 
 

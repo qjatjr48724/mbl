@@ -9,6 +9,11 @@ import { STAT_KEYS, addStats, normalizeStats, type StatKey, type Stats } from "@
 import CombatPowerCard from "@/components/CombatPowerCard";
 import { deriveCombatPower } from "@/lib/engine/combatPower";
 import { getJobOptionsByGroup, formatJobLabel } from "@/lib/jobs";
+import { WEAPON_KEYS, WEAPON_LABEL_KO, type WeaponKey } from "@/lib/constants/weapons";
+import DerivedStatsCard from "@/components/DerivedStatsCard";
+import { deriveAll } from "@/lib/engine/derivedStats";
+
+
 
 
 const JOBS: JobKo[] = ["전사", "마법사", "궁수", "도적"];
@@ -103,10 +108,23 @@ export default function BuildPanel({
     }).slice(0, 50);
   }, [activeSlot, query, state.job, state.level]);
 
-
+// ### total 계산
   const total = React.useMemo(() => calcTotal(state), [state]);
   const combatPower = React.useMemo(() => deriveCombatPower(total), [total]);
   const jobOptions = React.useMemo(() => getJobOptionsByGroup(state.job), [state.job]);
+  const derived = React.useMemo(
+    () =>
+      deriveAll({
+        total,
+        job: state.job,
+        weaponType: state.weaponType ?? null,
+        physMastery: state.physMastery ?? 0.6,
+        spellMastery: state.spellMastery ?? 0.6,
+        spellAttack: state.spellAttack ?? 100,
+      }),
+    [total, state.job, state.weaponType, state.physMastery, state.spellMastery, state.spellAttack]
+  );
+  
 
 
   function openItemModal(item: ItemMaster) {
@@ -206,6 +224,75 @@ export default function BuildPanel({
             </select>
           </div>
 
+          <div className="space-y-1">
+            <div className="text-xs text-gray-600">무기 종류(무기상수)</div>
+            <select
+              className="w-full rounded-xl border px-3 py-2"
+              value={(state.weaponType ?? "") as any}
+              onChange={(e) =>
+                setState((p) => ({
+                  ...p,
+                  weaponType: (e.target.value || null) as WeaponKey | null,
+                }))
+              }
+            >
+              <option value="">(선택 안 함)</option>
+              {WEAPON_KEYS.map((k) => (
+                <option key={k} value={k}>
+                  {WEAPON_LABEL_KO[k]}
+                </option>
+              ))}
+            </select>
+            <div className="text-[11px] text-gray-500">
+              * 도끼/둔기/창/폴암은 베기/찌르기에 따라 상수가 달라져서 둘 다 계산해 표시합니다.
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-1">
+              <div className="text-xs text-gray-600">물리 숙련도</div>
+              <input
+                className="w-full rounded-xl border px-3 py-2"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={state.physMastery ?? 0.6}
+                onChange={(e) =>
+                  setState((p) => ({ ...p, physMastery: Number(e.target.value) }))
+                }
+              />
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-xs text-gray-600">마법 숙련도</div>
+              <input
+                className="w-full rounded-xl border px-3 py-2"
+                type="number"
+                step="0.01"
+                min="0"
+                max="1"
+                value={state.spellMastery ?? 0.6}
+                onChange={(e) =>
+                  setState((p) => ({ ...p, spellMastery: Number(e.target.value) }))
+                }
+              />
+            </div>
+
+            <div className="space-y-1">
+              <div className="text-xs text-gray-600">스킬공격력</div>
+              <input
+                className="w-full rounded-xl border px-3 py-2"
+                type="number"
+                step="1"
+                min="1"
+                value={state.spellAttack ?? 100}
+                onChange={(e) =>
+                  setState((p) => ({ ...p, spellAttack: Number(e.target.value) }))
+                }
+              />
+            </div>
+          </div>
 
 
           <div className="space-y-1">
@@ -266,6 +353,16 @@ export default function BuildPanel({
 
       {/* v1 공격력/마력 표기 */}
       <CombatPowerCard value={combatPower} title="공격력/마력(표기)" />
+
+      {/* v1.6 파생/공마 계산(무기상수 반영) */}
+      <DerivedStatsCard
+        job={state.job}
+        weaponType={(state.weaponType ?? null) as any}
+        physMastery={state.physMastery ?? 0.6}
+        spellMastery={state.spellMastery ?? 0.6}
+        spellAttack={state.spellAttack ?? 100}
+        value={derived}
+      />
 
       {/* 슬롯 + 검색 */}
       <div className="grid gap-4 md:grid-cols-3">
