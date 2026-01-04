@@ -12,6 +12,8 @@ export type ItemMaster = {
   jobRestrictions: Array<JobKo | "ALL">;
   statTemplate: StatKey[];
   defaultStats?: Partial<Record<StatKey, number>>;
+  weaponType?: WeaponKey; // ✅ 무기(slot="weapon")일 때만 사용
+  
 };
 
 export type EquippedItem = {
@@ -19,7 +21,7 @@ export type EquippedItem = {
   itemId: string;
   itemName: string;
   customStats: Stats; // number | null
-  weaponType?: import("@/lib/constants/weapons").WeaponKey | null;
+  weaponType?: WeaponKey | null; // ✅ 무기일 때만 채움
 
 };
 

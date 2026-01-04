@@ -119,20 +119,21 @@ export default function BuildPanel({
   const total = React.useMemo(() => calcTotal(state), [state]);
   const combatPower = React.useMemo(() => deriveCombatPower(total), [total]);
   const jobOptions = React.useMemo(() => getJobOptionsByGroup(state.job), [state.job]);
-  const safeWeaponType = state.weaponType && allowedWeapons.includes(state.weaponType)
-  ? state.weaponType
-  : (allowedWeapons[0] ?? null);
+  const equippedWeaponType = state.equipped.weapon?.weaponType ?? null;
+  // const safeWeaponType = state.weaponType && allowedWeapons.includes(state.weaponType) ? state.weaponType : (allowedWeapons[0] ?? null);
+  
   const derived = React.useMemo(
     () =>
       deriveAll({
         total,
         job: state.job,
-        weaponType: safeWeaponType ?? null,
+        weaponType: equippedWeaponType ?? null,
         physMastery: state.physMastery ?? 0.6,
         spellMastery: state.spellMastery ?? 0.6,
         spellAttack: state.spellAttack ?? 100,
+
       }),
-    [total, state.job, state.weaponType, state.physMastery, state.spellMastery, state.spellAttack]
+    [total, state.job, equippedWeaponType, state.physMastery, state.spellMastery, state.spellAttack]
   );
   
 
@@ -163,6 +164,8 @@ export default function BuildPanel({
           itemId: modalItem.id,
           itemName: modalItem.name,
           customStats: modalStats,
+          weaponType: modalItem.slot === "weapon" ? ((modalItem as any).weaponType ?? null) : undefined,
+
         },
       },
     }));
@@ -246,7 +249,7 @@ export default function BuildPanel({
             <div className="text-xs text-gray-600">무기 종류(무기상수)</div>
             <select
               className="w-full rounded-xl border px-3 py-2"
-              value={(state.weaponType ?? "") as any}
+              value={(equippedWeaponType ?? "") as any}
               onChange={(e) =>
                 setState((p) => ({
                   ...p,
@@ -376,7 +379,7 @@ export default function BuildPanel({
       {/* v1.6 파생/공마 계산(무기상수 반영) */}
       <DerivedStatsCard
         job={state.job}
-        weaponType={(state.weaponType ?? null) as any}
+        weaponType={(equippedWeaponType ?? null) as any}
         physMastery={state.physMastery ?? 0.6}
         spellMastery={state.spellMastery ?? 0.6}
         spellAttack={state.spellAttack ?? 100}
