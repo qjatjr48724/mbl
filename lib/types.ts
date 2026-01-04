@@ -19,6 +19,8 @@ export type EquippedItem = {
   itemId: string;
   itemName: string;
   customStats: Stats; // number | null
+  weaponType?: import("@/lib/constants/weapons").WeaponKey | null;
+
 };
 
 
@@ -29,10 +31,6 @@ export type BuildState = {
   baseStats: Stats;
   equipped: Partial<Record<SlotKey, EquippedItem>>;
   skills?: Record<string, number>; // 스킬ID -> 레벨
-
-
-  // ✅ 추가
-  weaponType?: WeaponKey | null;
 
   // ✅ 기본값을 UI에서 설정(없으면 아래 엔진에서 fallback)
   physMastery?: number | null;   // 0~1, 예: 0.6
