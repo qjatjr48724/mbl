@@ -159,9 +159,10 @@ export const ITEMS: ItemMasterWithWeapon[] = [
     weaponType: "wand",
     requiredLevel: 8,
     jobRestrictions: ["마법사"],
-    statTemplate: ["MATT", "INT"],
-    defaultStats: { MATT: 18, INT: 1 },
+    statTemplate: ["WATT", "MATT", "INT"],
+    defaultStats: { WATT: 33, MATT: 53, INT: 1 }, // 예시값(나중에 데이터팩으로 교체)
   }),
+  
   item({
     id: "wp_staff_001",
     name: "초보자용 스태프",
@@ -169,9 +170,10 @@ export const ITEMS: ItemMasterWithWeapon[] = [
     weaponType: "staff",
     requiredLevel: 8,
     jobRestrictions: ["마법사"],
-    statTemplate: ["MATT", "INT"],
-    defaultStats: { MATT: 20, INT: 1 },
+    statTemplate: ["WATT", "MATT", "INT"],
+    defaultStats: { WATT: 33, MATT: 53, INT: 1 },
   }),
+  
 
   // ─────────────────────────────────────────
   // 방패(shield) / 보조장비(전사 등)

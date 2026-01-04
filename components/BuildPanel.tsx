@@ -11,6 +11,7 @@ import { deriveCombatPower } from "@/lib/engine/combatPower";
 import { getJobOptionsByGroup, formatJobLabel } from "@/lib/jobs";
 import { WEAPON_KEYS, WEAPON_LABEL_KO, type WeaponKey } from "@/lib/constants/weapons";
 import DerivedStatsCard from "@/components/DerivedStatsCard";
+import CharacterStatWindow from "@/components/CharacterStatWindow";
 import { deriveAll } from "@/lib/engine/derivedStats";
 import { getAllowedWeapons } from "@/lib/constants/weaponRules";
 
@@ -117,6 +118,17 @@ export default function BuildPanel({
 
 // ### total 계산
   const total = React.useMemo(() => calcTotal(state), [state]);
+  const baseNorm = React.useMemo(() => normalizeStats(state.baseStats), [state.baseStats]);
+  const equipNorm = React.useMemo(() => {
+    let sum: Stats = {};
+    for (const slot of SLOT_KEYS) {
+      const e = state.equipped[slot];
+      if (!e) continue;
+      sum = addStats(sum, e.customStats);
+    }
+    return normalizeStats(sum);
+  }, [state.equipped]);
+
   const combatPower = React.useMemo(() => deriveCombatPower(total), [total]);
   const jobOptions = React.useMemo(() => getJobOptionsByGroup(state.job), [state.job]);
   const equippedWeaponType = state.equipped.weapon?.weaponType ?? null;
@@ -372,6 +384,21 @@ export default function BuildPanel({
           <div className="text-xs text-gray-500">* 빈칸(null)은 계산 시 0으로 취급</div>
         </div>
       </div>
+      
+      <CharacterStatWindow
+        name="캐릭터"
+        jobLabel={
+          state.jobDetail
+            ? `${state.job} / ${state.jobDetail}`
+            : state.job
+        }
+        level={state.level ?? 1}
+        base={baseNorm as any}
+        equip={equipNorm as any}
+        total={total as any}
+        derived={derived as any}
+      />
+
 
       {/* v1 공격력/마력 표기 */}
       <CombatPowerCard value={combatPower} title="공격력/마력(표기)" />
